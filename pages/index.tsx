@@ -1,13 +1,16 @@
 import { graphqlClient } from "@/client/api";
 import FeedCard from "@/components/FeedCard";
+import { Tweet } from "@/gql/graphql";
 import { verifyUserGoogleToken } from "@/graphql/query/userQuery";
+import { useCreateTweet, useGetAllTweets } from "@/hooks/tweetHooks";
 import { useCurrentUser } from "@/hooks/userHooks";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { InvalidateQueryFilters, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { AiFillMessage } from "react-icons/ai";
+import { BiImageAlt } from "react-icons/bi";
 import { BsTwitter } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { IoIosHome, IoIosNotifications } from "react-icons/io";
@@ -45,6 +48,13 @@ export default function Home() {
   const queryClient = useQueryClient();
 
   const { user: currentUser } = useCurrentUser();
+  const { tweets = [] } = useGetAllTweets();
+  const { mutate } = useCreateTweet();
+  const [content, setContent] = useState("");
+
+  const handleCreateTweet = () => {
+    mutate({ content, imageUrl: "" });
+  };
 
   const handleLoginWithGoogle = useCallback(
     async (cred: CredentialResponse) => {
@@ -68,6 +78,13 @@ export default function Home() {
     },
     [queryClient]
   );
+
+  const handleSelectImage = useCallback(() => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+  }, []);
 
   return (
     <div className="grid grid-cols-12 px-48">
@@ -114,8 +131,49 @@ export default function Home() {
         </div>
       </div>
       <div className="no-scrollbar col-span-6 border-r-[1px] border-l-[1px] border-slate-600 h-screen overflow-scroll">
-        <FeedCard />
-        <FeedCard />
+        <div>
+          <div className="border-y-2 border-gray-700 p-4 hover:bg-gray-900 cursor-pointer transition-all">
+            <div className="grid grid-cols-12 gap-3">
+              <div className="col-span-1">
+                {currentUser?.profileImageUrl && (
+                  <Image
+                    width={50}
+                    height={50}
+                    alt=""
+                    src={currentUser.profileImageUrl}
+                    className="rounded-full"
+                  />
+                )}
+              </div>
+              <div className="col-span-11">
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className=" border-b border-slate-700  w-full bg-transparent text-xl p-3  focus:outline-none"
+                  placeholder="What's Happening?"
+                  rows={3}
+                ></textarea>
+                <div className="text-3xl flex justify-between ">
+                  <div className="flex gap-x-16">
+                    <BiImageAlt onClick={handleSelectImage} />
+                    <BiImageAlt />
+                    <BiImageAlt />
+                    <BiImageAlt />
+                  </div>
+                  <button
+                    onClick={handleCreateTweet}
+                    className="bg-green-700 font-semibold text-sm h-fit py-2 px-4 rounded-full"
+                  >
+                    Tweet
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {tweets?.map((item, i) => {
+          return <FeedCard key={i} data={item as Tweet} />;
+        })}
       </div>
       <div className="col-span-3 p-5 ">
         {!currentUser && (

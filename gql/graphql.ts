@@ -16,18 +16,24 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CreateTweet = {
+  content: Scalars['String']['input'];
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  echo?: Maybe<Scalars['String']['output']>;
+  createTweet?: Maybe<Tweet>;
 };
 
 
-export type MutationEchoArgs = {
-  message: Scalars['String']['input'];
+export type MutationCreateTweetArgs = {
+  payLoad: CreateTweet;
 };
 
 export type Query = {
   __typename?: 'Query';
+  getAllTweets?: Maybe<Array<Maybe<Tweet>>>;
   getCurrentUser?: Maybe<User>;
   verifyGoogleToken?: Maybe<Scalars['String']['output']>;
 };
@@ -37,14 +43,36 @@ export type QueryVerifyGoogleTokenArgs = {
   token: Scalars['String']['input'];
 };
 
+export type Tweet = {
+  __typename?: 'Tweet';
+  author: User;
+  authorId: Scalars['String']['output'];
+  content: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+};
+
 export type User = {
   __typename?: 'User';
   email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   profileImageUrl?: Maybe<Scalars['String']['output']>;
+  tweets?: Maybe<Array<Maybe<Tweet>>>;
 };
+
+export type CreateTweetMutationVariables = Exact<{
+  payLoad: CreateTweet;
+}>;
+
+
+export type CreateTweetMutation = { __typename?: 'Mutation', createTweet?: { __typename?: 'Tweet', id: string, content: string } | null };
+
+export type GetAllTweetsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllTweetsQuery = { __typename?: 'Query', getAllTweets?: Array<{ __typename?: 'Tweet', content: string, id: string, imageUrl?: string | null, authorId: string, author: { __typename?: 'User', firstName?: string | null, email: string, lastName?: string | null, profileImageUrl?: string | null } } | null> | null };
 
 export type VerifyGoogleTokenQueryVariables = Exact<{
   token: Scalars['String']['input'];
@@ -56,8 +84,10 @@ export type VerifyGoogleTokenQuery = { __typename?: 'Query', verifyGoogleToken?:
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', id: string, firstName: string, lastName?: string | null, profileImageUrl?: string | null, email: string } | null };
+export type GetCurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, profileImageUrl?: string | null, email: string } | null };
 
 
+export const CreateTweetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTweet"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"payLoad"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateTweet"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTweet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"payLoad"},"value":{"kind":"Variable","name":{"kind":"Name","value":"payLoad"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]} as unknown as DocumentNode<CreateTweetMutation, CreateTweetMutationVariables>;
+export const GetAllTweetsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllTweets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllTweets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"authorId"}},{"kind":"Field","name":{"kind":"Name","value":"author"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profileImageUrl"}}]}}]}}]}}]} as unknown as DocumentNode<GetAllTweetsQuery, GetAllTweetsQueryVariables>;
 export const VerifyGoogleTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"VerifyGoogleToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyGoogleToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<VerifyGoogleTokenQuery, VerifyGoogleTokenQueryVariables>;
 export const GetCurrentUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"profileImageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
